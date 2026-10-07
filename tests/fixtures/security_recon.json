@@ -1,0 +1,7 @@
+{
+  "author": "Codex; operator-owned synthetic qualification fixture",
+  "entry_points": ["records.py: vulnerable_read and safe_read"],
+  "trust_boundaries": ["caller tenant to another tenant's record"],
+  "assumptions": ["Synthetic fixture only; no production deployment or credentials"],
+  "paths": ["records.py"]
+}

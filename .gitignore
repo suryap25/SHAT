@@ -1,0 +1,20 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+
+# Engagement data stays local — never commit targets, snapshots, evidence,
+# review packages, control directories, or anything derived from a real target.
+work/
+evidence/
+secrets/
+credentials/
+control/
+*.sqlite
+*-review-package*/

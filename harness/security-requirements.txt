@@ -1,0 +1,3 @@
+# No third-party runtime dependencies. The Docker sandbox adapter uses only the
+# standard library and the `docker` CLI. (The former OpenShell adapter needed
+# PyYAML to parse its effective-policy document; the Docker runner does not.)
