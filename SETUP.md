@@ -59,3 +59,43 @@ hit it at setup, not mid-engagement.
 It reports; it never installs Docker or Python for you, and it does not touch any
 engagement. Qualification (`--qualify`) is per base image — re-run it whenever you
 change the base image an engagement builds from.
+
+## Advisory inference providers (optional)
+
+The model layer is advisory only — no execution or disposition authority. It has
+three backends, all advisory, with no mid-task model switching:
+
+- **`ollama` (default)** — loopback-only local inference. Target source and
+  evidence never leave the host. Nothing to configure beyond a local Ollama.
+- **`openrouter`** — the hosted OpenAI-compatible router at `openrouter.ai`. Key
+  from `OPENROUTER_API_KEY`.
+- **`custom`** — bring your own OpenAI-compatible router (e.g. a self-hosted
+  **NovaRouter** or LiteLLM). URL from `AHS_ROUTER_URL`, key from
+  `AHS_ROUTER_API_KEY`.
+
+Any backend other than loopback sends the prompt (which carries target source and
+evidence) **off the machine**, so a remote endpoint is gated behind `--allow-egress`,
+must use TLS, and must carry a key. Use it only when the target owner authorizes
+sending their source to that router's backends. A `custom` router on `127.0.0.1`
+is treated as on-machine and needs neither `--allow-egress` nor a key (note: a
+local router that forwards upstream still causes egress the harness cannot see —
+that is on you to know).
+
+Put secrets in a gitignored `.env` (never commit it):
+
+```bash
+cp .env.example .env            # edit .env: paste your key(s) and, for custom, AHS_ROUTER_URL
+set -a; . ./.env; set +a        # load the vars into the shell
+
+# hosted OpenRouter
+python3 -m harness.security_model --provider openrouter --allow-egress \
+    --model VENDOR/MODEL --prompt FILE --out NEW_FILE
+
+# bring-your-own router (remote example — drop --allow-egress for a loopback router)
+python3 -m harness.security_model --provider custom --allow-egress \
+    --model VENDOR/MODEL --prompt FILE --out NEW_FILE
+```
+
+Keys are read from the environment at runtime and are never written to the repo,
+the request URL, or the run receipt. Omitting `--allow-egress` makes a remote
+provider fail closed, so target source is never sent off-machine by accident.

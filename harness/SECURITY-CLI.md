@@ -58,16 +58,29 @@ disposition when present.
 Disposition is immutable for a package: changing REWORK to ACCEPT requires a new
 investigation revision and review, not replacement of the original decision.
 
-Advisory local inference:
+Advisory inference:
 
 ```text
 python -m harness.security_model --model MODEL --prompt FILE --out NEW_FILE
+python -m harness.security_model --provider openrouter --allow-egress \
+    --model VENDOR/MODEL --prompt FILE --out NEW_FILE   # OPENROUTER_API_KEY in env
+python -m harness.security_model --provider custom --allow-egress \
+    --model VENDOR/MODEL --prompt FILE --out NEW_FILE   # AHS_ROUTER_URL + AHS_ROUTER_API_KEY in env
 ```
 
-Only loopback Ollama endpoints are admitted; proxies and redirects are disabled.
-No paid API adapter, model switching or autonomous tool calls. Raw output and
-prompt digest are retained. A model returning schema-valid prose still needs
-semantic review; transport/schema success is not security quality qualification.
+Three advisory backends. Default `ollama` admits only loopback endpoints; proxies
+and redirects are disabled and target evidence never leaves the host. `openrouter`
+is the hosted OpenAI-compatible router at the pinned host `openrouter.ai`.
+`custom` is a bring-your-own OpenAI-compatible router (e.g. a self-hosted
+NovaRouter / LiteLLM) whose URL comes from `AHS_ROUTER_URL`. Any non-loopback
+endpoint sends the prompt (target source and evidence) off-machine, so it is gated
+behind `--allow-egress`, must use TLS, and must carry a key taken from the
+environment — never the repo, the URL, or the receipt; a loopback `custom` router
+stays on-machine and needs neither. All backends are advisory only: no model
+switching mid-task, no autonomous tool calls, no execution or disposition
+authority. Provider, egress class, raw output and prompt digest are retained. A
+model returning schema-valid prose still needs semantic review; transport/schema
+success is not security quality qualification.
 
 Docker tests run with `--network none`, a read-only root filesystem, size-capped
 tmpfs for /workspace and /tmp, 512 MiB memory and no swap, one CPU, a 128-pid cap,
