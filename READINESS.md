@@ -59,6 +59,12 @@ for hostile or unknown binaries until separation exists.
 **Blocker:** the local model is advisory and unqualified; all recon/probes are
 hand-written. Autonomy stays off until qualification + tripwires exist.
 
+**Plan:** the build-out for these three boxes is specified in
+[CLASS4-PLAN.md](CLASS4-PLAN.md) — assisted autonomy where the model *proposes* a
+snapshot-bound plan and the operator approves it before the existing Class 1 path
+executes it. The model never gains execution or disposition authority. Nothing in
+that plan is built yet; this class stays NO-GO until its exit criteria are met.
+
 ---
 
 ## Class 5 — New base image (any class) · **CONDITIONAL**
